@@ -569,7 +569,7 @@ namespace Lab9
 
         private void Gouraud(Point3D ligth)
         {
-            Bitmap bmp = Lighting.Gouraud(pictureBox1.Width, pictureBox1.Height, curFigure, Color.PaleTurquoise, ligth, projBox.SelectedIndex);
+            Bitmap bmp = Lighting.Gouraud(pictureBox1.Width, pictureBox1.Height, curFigure, Color.LimeGreen, ligth, projBox.SelectedIndex);
             pictureBox1.Image = bmp;
             pictureBox1.Invalidate();
         }
@@ -618,8 +618,9 @@ namespace Lab9
                 float x = float.Parse(textBox14.Text);
                 float y = float.Parse(textBox18.Text);
                 float z = float.Parse(textBox19.Text);
-                Gouraud(new Point3D(x, y, z));
                 Draw();
+                Gouraud(new Point3D(x, y, z));
+                
             }
             else
             {

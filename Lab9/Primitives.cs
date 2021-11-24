@@ -15,7 +15,7 @@ namespace Lab9
         public double light { get; set; } = 1.0;
 
 
-        public Point3D(double l, float x, float y, float z = 0)
+        public Point3D(double l, float x, float y,  float z)
         {
             X = x;
             Y = y;

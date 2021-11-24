@@ -10,10 +10,10 @@ namespace Lab9
     class Lighting
     {
        
-        public static Bitmap Gouraud(int width, int height, Figure figure, Color color, Point3D light, int projMode = 0)
+        public static Bitmap Gouraud(int width, int height, Figure figure, Color color, Point3D light, int projMode)
         {
             Shading(figure, light); 
-            Buffer.ProjMode = projMode;
+            LightRasterization.ProjMode = projMode;
 
             Bitmap newImg = new Bitmap(width, height);
             for (int i = 0; i < width; i++)
@@ -67,7 +67,7 @@ namespace Lab9
 
 
 
-        private static void Shading(Figure figure, Point3D light)
+        private static void Shading(Figure figure, Point3D plight)
         {
 
             Dictionary<int, Point3D> normal = new Dictionary<int, Point3D>();
@@ -79,14 +79,14 @@ namespace Lab9
 
             for (int i = 0; i < figure.Vertexes.Count; i++)
             {
-                figure.Vertexes[i].light = ModelLambert(figure.Vertexes[i], normal[i], light);
+                figure.Vertexes[i].light = ModelLambert(figure.Vertexes[i], normal[i], plight);
             }
         }
 
 
-        private static double ModelLambert(Point3D vertex, Point3D normal, Point3D light)
+        private static double ModelLambert(Point3D vertex, Point3D normal, Point3D plight)
         {
-            Point3D lightplace = new Point3D(vertex.X - light.X, vertex.Y - light.Y, vertex.Z - light.Z);
+            Point3D lightplace = new Point3D(vertex.X - plight.X, vertex.Y - plight.Y, vertex.Z - plight.Z);
             double cos = Vectors.VectorCos(lightplace, normal);
             return (cos + 1) / 2;
         }

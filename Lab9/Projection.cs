@@ -110,10 +110,11 @@ namespace Lab9
             return points;
         }
 
-        public List<Point3D> ProjectZBuff(List<Point3D> surfaces, int projectType = 0)
+        public List<Point3D> ProjectZBuff(List<Point3D> fase, int mode = 0)
         {
+            // TODO: Добавить сюда выбор проекции, сейчас только перспективная одноточечная
             float[,] matr;
-            switch (projectType)
+            switch (mode)
             {
                 case 0:
                     matr = perspective;
@@ -124,12 +125,12 @@ namespace Lab9
                 default:
                     throw new ArgumentException();
             }
-            List<Point3D> points = new List<Point3D>(surfaces);
+            List<Point3D> points = new List<Point3D>(fase);
 
             for (int i = 0; i < points.Count; ++i)
             {
                 float[,] tmp1 = MultMatrix(new float[,] { { points[i].X, points[i].Y, points[i].Z, 1 } }, matr);
-                points[i] = new Point3D(tmp1[0, 0] / tmp1[0, 3], tmp1[0, 1] / tmp1[0, 3], points[i].Z);
+                points[i] = new Point3D(points[i].light, tmp1[0, 0] / tmp1[0, 3], tmp1[0, 1] / tmp1[0, 3],  points[i].Z);
             }
             return points;
         }
