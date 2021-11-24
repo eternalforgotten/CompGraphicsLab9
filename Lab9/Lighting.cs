@@ -12,7 +12,20 @@ namespace Lab9
        
         public static Bitmap Gouraud(int width, int height, Figure figure, Color color, Point3D light, int projMode)
         {
-            Shading(figure, light); 
+            
+
+            Dictionary<int, Point3D> normal = new Dictionary<int, Point3D>();
+            for (int i = 0; i < figure.Vertexes.Count; i++)
+            {
+                List<List<int>> surfaces = figure.Surfaces.Where(x => x.Contains(i)).ToList();
+                normal.Add(i, Vectors.NormalCalculation(surfaces, figure));
+            }
+
+            for (int i = 0; i < figure.Vertexes.Count; i++)
+            {
+                figure.Vertexes[i].light = ModelLambert(figure.Vertexes[i], normal[i], light);
+            }
+
             LightRasterization.ProjMode = projMode;
 
             Bitmap newImg = new Bitmap(width, height);
@@ -32,7 +45,7 @@ namespace Lab9
                     
 
             
-            List<List<Point3D>> rasterizedFigure = LightRasterization.Makerasterization(figure, true);
+            List<List<Point3D>> rasterizedFigure = LightRasterization.Makerasterization(figure);
 
             var centerX = width / 2;
             var centerY = height / 2;
@@ -66,22 +79,6 @@ namespace Lab9
         }
 
 
-
-        private static void Shading(Figure figure, Point3D plight)
-        {
-
-            Dictionary<int, Point3D> normal = new Dictionary<int, Point3D>();
-            for (int i = 0; i < figure.Vertexes.Count; i++)
-            {
-                List<List<int>> surfaces = figure.Surfaces.Where(x => x.Contains(i)).ToList();
-                normal.Add(i, Vectors.NormalCalculation(surfaces, figure));
-            }
-
-            for (int i = 0; i < figure.Vertexes.Count; i++)
-            {
-                figure.Vertexes[i].light = ModelLambert(figure.Vertexes[i], normal[i], plight);
-            }
-        }
 
 
         private static double ModelLambert(Point3D vertex, Point3D normal, Point3D plight)

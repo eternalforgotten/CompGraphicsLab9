@@ -567,9 +567,9 @@ namespace Lab9
 
         }
 
-        private void Gouraud(Point3D ligth)
+        private void Gouraud(Point3D light)
         {
-            Bitmap bmp = Lighting.Gouraud(pictureBox1.Width, pictureBox1.Height, curFigure, Color.LimeGreen, ligth, projBox.SelectedIndex);
+            Bitmap bmp = Lighting.Gouraud(pictureBox1.Width, pictureBox1.Height, curFigure, Color.BlueViolet, light, projBox.SelectedIndex);
             pictureBox1.Image = bmp;
             pictureBox1.Invalidate();
         }

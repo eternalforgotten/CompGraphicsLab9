@@ -13,7 +13,7 @@ namespace Lab9
 
         public static List<Point3D> MakeProj(List<Point3D> init) => new Projection().ProjectZBuff(init, ProjMode);
 
-        public static List<List<Point3D>> Makerasterization(Figure figure, bool light)
+        public static List<List<Point3D>> Makerasterization(Figure figure)
         {
             List<List<Point3D>> listrasterization = new List<List<Point3D>>();
             
@@ -26,10 +26,10 @@ namespace Lab9
                     surfacepoints.Add(figure.Vertexes[surf[i]]);
                 }
 
-                List<List<Point3D>> triangles = Triangulate(surfacepoints); 
+                List<List<Point3D>> triangles = Buffer.Triangulate(surfacepoints); 
                 foreach (List<Point3D> triangle in triangles)
                 {
-                    currsurface.AddRange(RasterizeTriangle(MakeProj(triangle), light));
+                    currsurface.AddRange(RasterizeTriangle(MakeProj(triangle)));
                 }
                 listrasterization.Add(currsurface);
             }
@@ -37,20 +37,20 @@ namespace Lab9
         }
 
        
-        private static List<Point3D> RasterizeTriangle(List<Point3D> points, bool f_light)
+        private static List<Point3D> RasterizeTriangle(List<Point3D> points)
         {
             List<Point3D> res = new List<Point3D>();
 
             points.Sort((point1, point2) => point1.Y.CompareTo(point2.Y)); 
             var rpoints = points.Select(point => (X: (int)Math.Round(point.X), Y: (int)Math.Round(point.Y), Z: (int)Math.Round(point.Z), L: point.light)).ToList();
 
-            var xy0Toxy1 = Interpolate(rpoints[0].Y, rpoints[0].X, rpoints[1].Y, rpoints[1].X);
-            var xy1Toxy2 = Interpolate(rpoints[1].Y, rpoints[1].X, rpoints[2].Y, rpoints[2].X);
-            var xy0Toxy2 = Interpolate(rpoints[0].Y, rpoints[0].X, rpoints[2].Y, rpoints[2].X);
+            var xy0Toxy1 = Buffer.Interpolate(rpoints[0].Y, rpoints[0].X, rpoints[1].Y, rpoints[1].X);
+            var xy1Toxy2 = Buffer.Interpolate(rpoints[1].Y, rpoints[1].X, rpoints[2].Y, rpoints[2].X);
+            var xy0Toxy2 = Buffer.Interpolate(rpoints[0].Y, rpoints[0].X, rpoints[2].Y, rpoints[2].X);
 
-            var yz0Toyz1 = Interpolate(rpoints[0].Y, rpoints[0].Z, rpoints[1].Y, rpoints[1].Z);
-            var yz1Toyz2 = Interpolate(rpoints[1].Y, rpoints[1].Z, rpoints[2].Y, rpoints[2].Z);
-            var yz0Toyz2 = Interpolate(rpoints[0].Y, rpoints[0].Z, rpoints[2].Y, rpoints[2].Z);
+            var yz0Toyz1 = Buffer.Interpolate(rpoints[0].Y, rpoints[0].Z, rpoints[1].Y, rpoints[1].Z);
+            var yz1Toyz2 = Buffer.Interpolate(rpoints[1].Y, rpoints[1].Z, rpoints[2].Y, rpoints[2].Z);
+            var yz0Toyz2 = Buffer.Interpolate(rpoints[0].Y, rpoints[0].Z, rpoints[2].Y, rpoints[2].Z);
 
             xy0Toxy1.RemoveAt(xy0Toxy1.Count - 1);
             List<int> xy02 = xy0Toxy1.Concat(xy1Toxy2).ToList();
@@ -80,13 +80,12 @@ namespace Lab9
             int y0 = rpoints[0].Y;
             int y2 = rpoints[2].Y;
 
-            if (f_light)
-            {
-                var lTo01 = InterpolateForLight(rpoints[0].Y, rpoints[0].L, rpoints[1].Y, rpoints[1].L);
-                var lTo12 = InterpolateForLight(rpoints[1].Y, rpoints[1].L, rpoints[2].Y, rpoints[2].L);
-                var lTo02 = InterpolateForLight(rpoints[0].Y, rpoints[0].L, rpoints[2].Y, rpoints[2].L);
+            
+            var lTo01 = InterpolateForLight(rpoints[0].Y, rpoints[0].L, rpoints[1].Y, rpoints[1].L);
+            var lTo12 = InterpolateForLight(rpoints[1].Y, rpoints[1].L, rpoints[2].Y, rpoints[2].L);
+            var lTo02 = InterpolateForLight(rpoints[0].Y, rpoints[0].L, rpoints[2].Y, rpoints[2].L);
 
-                lTo01.RemoveAt(lTo01.Count - 1);
+            lTo01.RemoveAt(lTo01.Count - 1);
                 List<double> h012 = lTo01.Concat(lTo12).ToList();
 
                 if (xy0Toxy2[middle] < xy02[middle])
@@ -99,37 +98,27 @@ namespace Lab9
                     leftH = h012;
                     rigthH = lTo02;
                 }
-            }
+            
 
             for (int ind = 0; ind <= y2 - y0; ind++) 
             {                                        
                 int XL = leftX[ind];
                 int XR = rightX[ind];
 
-                List<int> intCurrZ = Interpolate(XL, leftZ[ind], XR, rightZ[ind]);
-                if (f_light)
-                {
+                List<int> intCurrZ = Buffer.Interpolate(XL, leftZ[ind], XR, rightZ[ind]);
+                
                     List<double> doubleCurrL = InterpolateForLight(XL, leftH[ind], XR, rigthH[ind]);
                     for (int x = XL; x < XR; x++)
                     {
                         res.Add(new Point3D(doubleCurrL[x - XL], x, y0 + ind,  intCurrZ[x - XL]));
                     }
-                }
-                else
-                {
-                    for (int x = XL; x < XR; x++)
-                    {
-                        res.Add(new Point3D(x, y0 + ind, intCurrZ[x - XL]));
-                    }
-                }
+                
+                
             }
 
             return res; 
         }
 
-
-
-        
 
         public static List<double> InterpolateForLight(int y0, double l0, int y1, double l1)
         {
@@ -150,41 +139,7 @@ namespace Lab9
             return res;
         }
 
-        // Триангуляция (по грани возвращает список треугольников)
-        private static List<List<Point3D>> Triangulate(List<Point3D> points)
-        {
-            if (points.Count == 3)
-                return new List<List<Point3D>> { points };
-
-            List<List<Point3D>> res = new List<List<Point3D>>();
-            for (int i = 2; i < points.Count; i++)
-            {
-                res.Add(new List<Point3D> { points[0], points[i - 1], points[i] });
-            }
-
-            return res;
-        }
-
-
-
-        public static List<int> Interpolate(int i0, int d0, int i1, int d1)
-        {
-            if (i0 == i1)
-            {
-                return new List<int> { d0 };
-            }
-            List<int> res = new List<int>();
-
-            float step = (d1 - d0) * 1.0f / (i1 - i0);
-            float value = d0;
-            for (int i = i0; i <= i1; i++)
-            {
-                res.Add((int)value);
-                value += step;
-            }
-
-            return res;
-        }
+        
 
     }
 }
