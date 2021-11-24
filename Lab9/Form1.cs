@@ -23,6 +23,7 @@ namespace Lab9
         private List<Point3D> rotationPoints;
         private List<Figure> allFigures = new List<Figure>();
         private List<Color> colors;
+        Bitmap texture;
 
         public Form1()
         {
@@ -316,6 +317,8 @@ namespace Lab9
             allFigures.Clear();
             pictureBox1.Invalidate();
             rotationPoints.Clear();
+            curFigure = null;
+            DeletePic();
         }
 
         private void DeletePic()
@@ -333,6 +336,10 @@ namespace Lab9
             float z = float.Parse(textBox3.Text);
             AffineChanges.Translate(curFigure, x, y, z);
             Draw();
+            if (checkBox4.Checked)
+            {
+                Gouraud();
+            }
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -342,6 +349,10 @@ namespace Lab9
             float z = float.Parse(textBox3.Text) / 100;
             AffineChanges.Scale(curFigure, x, y, z);
             Draw();
+            if (checkBox4.Checked)
+            {
+                Gouraud();
+            }
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -351,24 +362,40 @@ namespace Lab9
             float z = float.Parse(textBox3.Text);
             AffineChanges.Rotate(curFigure, x, y, z);
             Draw();
+            if (checkBox4.Checked)
+            {
+                Gouraud();
+            }
         }
 
         private void button8_Click(object sender, EventArgs e)
         {
             AffineChanges.Reflect(curFigure, "xy");
             Draw();
+            if (checkBox4.Checked)
+            {
+                Gouraud();
+            }
         }
 
         private void button9_Click(object sender, EventArgs e)
         {
             AffineChanges.Reflect(curFigure, "yz");
             Draw();
+            if (checkBox4.Checked)
+            {
+                Gouraud();
+            }
         }
 
         private void button10_Click(object sender, EventArgs e)
         {
             AffineChanges.Reflect(curFigure, "xz");
             Draw();
+            if (checkBox4.Checked)
+            {
+                Gouraud();
+            }
         }
 
         private void button11_Click(object sender, EventArgs e)
@@ -376,6 +403,10 @@ namespace Lab9
             float a = float.Parse(textBox4.Text) / 100;
             AffineChanges.ScaleCenter(curFigure, a);
             Draw();
+            if (checkBox4.Checked)
+            {
+                Gouraud();
+            }
         }
         private void rotateBtn_Click(object sender, EventArgs e)
         {
@@ -399,6 +430,10 @@ namespace Lab9
                 AffineChanges.RotateFigureAboutLine(curFigure, (float)rotateAngle.Value, ed);
             }
             Draw();
+            if (checkBox4.Checked)
+            {
+                Gouraud();
+            }
         }
 
         private void projBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -567,9 +602,12 @@ namespace Lab9
 
         }
 
-        private void Gouraud(Point3D light)
+        private void Gouraud()
         {
-            Bitmap bmp = Lighting.Gouraud(pictureBox1.Width, pictureBox1.Height, curFigure, Color.BlueViolet, light, projBox.SelectedIndex);
+            float x = float.Parse(textBox14.Text);
+            float y = float.Parse(textBox18.Text);
+            float z = float.Parse(textBox19.Text);
+            Bitmap bmp = Lighting.Gouraud(pictureBox1.Width, pictureBox1.Height, curFigure, Color.BlueViolet, new Point3D(x,y,z), projBox.SelectedIndex);
             pictureBox1.Image = bmp;
             pictureBox1.Invalidate();
         }
@@ -615,18 +653,31 @@ namespace Lab9
         {
             if (checkBox4.Checked)
             {
-                float x = float.Parse(textBox14.Text);
-                float y = float.Parse(textBox18.Text);
-                float z = float.Parse(textBox19.Text);
                 Draw();
-                Gouraud(new Point3D(x, y, z));
-                
+                Gouraud();
             }
             else
             {
                 Draw();
             }
             
+        }
+
+        private void button17_Click(object sender, EventArgs e)
+        {
+            var dialog = new OpenFileDialog();
+            dialog.CheckFileExists = true;
+            dialog.CheckPathExists = true;
+            dialog.ShowDialog();
+            if (dialog.FileName == "")
+                return;
+            texture = new Bitmap(Image.FromFile(dialog.FileName));
+            pictureBox2.Image = new Bitmap(texture, pictureBox2.Width, pictureBox2.Height);
+        }
+
+        private void button18_Click(object sender, EventArgs e)
+        {
+           
         }
     }
 }

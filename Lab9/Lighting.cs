@@ -88,8 +88,5 @@ namespace Lab9
             return (cos + 1) / 2;
         }
 
-
-
-
     }
 }

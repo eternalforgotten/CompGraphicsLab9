@@ -47,6 +47,10 @@ namespace Lab9
         {
             return new Point3D(p1.X - p2.X, p1.Y - p2.Y, p1.Z - p2.Z);
         }
+        static public Point3D operator *(int k, Point3D p)
+        {
+            return new Point3D(p.X * k, p.Y * k, p.Z * k);
+        }
 
         public Point To2DPoint()
         {
