@@ -110,7 +110,7 @@ namespace Lab9
             return points;
         }
 
-        public List<Point3D> ProjectZBuff(List<Point3D> fase, int mode = 0)
+        public List<Point3D> ProjectZBuff(List<Point3D> surface, int mode = 0)
         {
             // TODO: Добавить сюда выбор проекции, сейчас только перспективная одноточечная
             float[,] matr;
@@ -125,7 +125,7 @@ namespace Lab9
                 default:
                     throw new ArgumentException();
             }
-            List<Point3D> points = new List<Point3D>(fase);
+            List<Point3D> points = new List<Point3D>(surface);
 
             for (int i = 0; i < points.Count; ++i)
             {

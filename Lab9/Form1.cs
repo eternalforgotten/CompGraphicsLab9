@@ -620,6 +620,17 @@ namespace Lab9
             pictureBox1.Invalidate();
         }
 
+        private void Texturize()
+        {
+            float x = float.Parse(textBox15.Text);
+            float y = float.Parse(textBox16.Text);
+            float z = float.Parse(textBox17.Text);
+            Point3D offset = new Point3D(x, y, z);
+            Bitmap bmp = Texture.Texturize(pictureBox1.Width, pictureBox1.Width, curFigure, texture, projBox.SelectedIndex, projection, offset);
+            pictureBox1.Image = bmp;
+            pictureBox1.Invalidate();
+        }
+
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
 
@@ -677,7 +688,7 @@ namespace Lab9
 
         private void button18_Click(object sender, EventArgs e)
         {
-           
+            Texturize();
         }
     }
 }

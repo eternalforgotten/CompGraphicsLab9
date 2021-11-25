@@ -12,6 +12,8 @@ namespace Lab9
         public float X { get; set; } = 0;
         public float Y { get; set; } = 0;
         public float Z { get; set; } = 0;
+        public float U { get; set; } = 0;
+        public float V { get; set; } = 0;
         public double light { get; set; } = 1.0;
 
 
