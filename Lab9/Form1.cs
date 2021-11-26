@@ -24,6 +24,7 @@ namespace Lab9
         private List<Figure> allFigures = new List<Figure>();
         private List<Color> colors;
         Bitmap texture;
+        bool texturized = false;
 
         public Form1()
         {
@@ -340,6 +341,10 @@ namespace Lab9
             {
                 Gouraud();
             }
+            if (texturized)
+            {
+                Texturize();
+            }
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -352,6 +357,10 @@ namespace Lab9
             if (checkBox4.Checked)
             {
                 Gouraud();
+            }
+            if (texturized)
+            {
+                Texturize();
             }
         }
 
@@ -366,6 +375,10 @@ namespace Lab9
             {
                 Gouraud();
             }
+            if (texturized)
+            {
+                Texturize();
+            }
         }
 
         private void button8_Click(object sender, EventArgs e)
@@ -375,6 +388,10 @@ namespace Lab9
             if (checkBox4.Checked)
             {
                 Gouraud();
+            }
+            if (texturized)
+            {
+                Texturize();
             }
         }
 
@@ -386,6 +403,10 @@ namespace Lab9
             {
                 Gouraud();
             }
+            if (texturized)
+            {
+                Texturize();
+            }
         }
 
         private void button10_Click(object sender, EventArgs e)
@@ -395,6 +416,10 @@ namespace Lab9
             if (checkBox4.Checked)
             {
                 Gouraud();
+            }
+            if (texturized)
+            {
+                Texturize();
             }
         }
 
@@ -406,6 +431,10 @@ namespace Lab9
             if (checkBox4.Checked)
             {
                 Gouraud();
+            }
+            if (texturized)
+            {
+                Texturize();
             }
         }
         private void rotateBtn_Click(object sender, EventArgs e)
@@ -433,6 +462,10 @@ namespace Lab9
             if (checkBox4.Checked)
             {
                 Gouraud();
+            }
+            if (texturized)
+            {
+                Texturize();
             }
         }
 
@@ -688,6 +721,7 @@ namespace Lab9
 
         private void button18_Click(object sender, EventArgs e)
         {
+            texturized = true;
             Texturize();
         }
     }
