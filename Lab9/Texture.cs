@@ -41,6 +41,13 @@ namespace Lab9
             var figureCenterX = (figureRightX - figureLeftX) / 2;
             var figureCenterY = (figureRightY - figureLeftY) / 2;
             Bitmap bitmap = new Bitmap(width, height);
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    bitmap.SetPixel(x, y, Color.White);
+                }
+            }
             List<Point3D> points = projection.ProjectWithPoints(figure, projType);
             foreach (var surface in RemoveInvisibleSurfaces.RemoveSurfaces(figure, offset))
             {

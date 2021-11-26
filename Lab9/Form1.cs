@@ -659,7 +659,7 @@ namespace Lab9
             float y = float.Parse(textBox16.Text);
             float z = float.Parse(textBox17.Text);
             Point3D offset = new Point3D(x, y, z);
-            Bitmap bmp = Texture.Texturize(pictureBox1.Width, pictureBox1.Width, curFigure, texture, projBox.SelectedIndex, projection, offset);
+            Bitmap bmp = Texture.Texturize(pictureBox1.Width, pictureBox1.Height, curFigure, texture, projBox.SelectedIndex, projection, offset);
             pictureBox1.Image = bmp;
             pictureBox1.Invalidate();
         }
