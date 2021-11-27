@@ -25,7 +25,8 @@ namespace Lab9
         private List<Color> colors;
         Bitmap texture;
         bool texturized = false;
-
+        private float rotx = -0.7f;
+        private float roty = 1.7f;
         public Form1()
         {
             InitializeComponent();
@@ -164,46 +165,70 @@ namespace Lab9
 
         private void movement(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode.ToString().CompareTo("Up") == 0)
+            if (checkBox3.Checked)
             {
-                camera.MoveCamera(0, 0, -4);
-                Draw();
-            }
+                if (e.KeyCode.ToString().CompareTo("Up") == 0)
+                {
+                    camera.MoveCamera(0, 0, -4);
+                    Draw();
+                }
 
-            if (e.KeyCode.ToString().CompareTo("Down") == 0)
-            {
-                camera.MoveCamera(0, 0, 4);
-                Draw();
+                if (e.KeyCode.ToString().CompareTo("Down") == 0)
+                {
+                    camera.MoveCamera(0, 0, 4);
+                    Draw();
+                }
+                if (e.KeyCode.ToString().CompareTo("W") == 0)
+                {
+                    camera.MoveCamera(0, -4, 0);
+                    Draw();
+                }
+                if (e.KeyCode.ToString().CompareTo("S") == 0)
+                {
+                    camera.MoveCamera(0, 4, 0);
+                    Draw();
+                }
+                if (e.KeyCode.ToString().CompareTo("D") == 0)
+                {
+                    camera.MoveCamera(4, 0, 0);
+                    Draw();
+                }
+                if (e.KeyCode.ToString().CompareTo("A") == 0)
+                {
+                    camera.MoveCamera(-4, 0, 0);
+                    Draw();
+                }
+                if (e.KeyCode.ToString().CompareTo("Left") == 0)
+                {
+                    camera.RotateCamera(-2, 0);
+                    Draw();
+                }
+                if (e.KeyCode.ToString().CompareTo("Right") == 0)
+                {
+                    camera.RotateCamera(2, 0);
+                    Draw();
+                }
             }
-            if (e.KeyCode.ToString().CompareTo("W") == 0)
+            else
             {
-                camera.MoveCamera(0, -4, 0);
-                Draw();
-            }
-            if (e.KeyCode.ToString().CompareTo("S") == 0)
-            {
-                camera.MoveCamera(0, 4, 0);
-                Draw();
-            }
-            if (e.KeyCode.ToString().CompareTo("D") == 0)
-            {
-                camera.MoveCamera(4, 0, 0);
-                Draw();
-            }
-            if (e.KeyCode.ToString().CompareTo("A") == 0)
-            {
-                camera.MoveCamera(-4, 0, 0);
-                Draw();
-            }
-            if (e.KeyCode.ToString().CompareTo("Left") == 0)
-            {
-                camera.RotateCamera(-2, 0);
-                Draw();
-            }
-            if (e.KeyCode.ToString().CompareTo("Right") == 0)
-            {
-                camera.RotateCamera(2, 0);
-                Draw();
+                if (e.KeyCode.ToString().CompareTo("Up") == 0)
+                {
+                    roty += 0.05f;
+                }
+
+                if (e.KeyCode.ToString().CompareTo("Down") == 0)
+                {
+                    roty -= 0.05f;
+                }
+                if (e.KeyCode.ToString().CompareTo("Left") == 0)
+                {
+                    rotx += 0.05f;
+                }
+                if (e.KeyCode.ToString().CompareTo("Right") == 0)
+                {
+                    rotx -= 0.05f;
+                }
+                DrawHorisont();
             }
         }
 
@@ -723,6 +748,99 @@ namespace Lab9
         {
             texturized = true;
             Texturize();
+        }
+
+        private double Distance(Point p1, Point p2) { return Sqrt((p1.X - p2.X) * (p1.X - p2.X) + (p1.Y - p2.Y) * (p1.Y - p2.Y)); }
+
+        private void button19_Click(object sender, EventArgs e)
+        {
+            DrawHorisont();
+        }
+
+        private void DrawHorisont()
+        {
+            g.Clear(Color.White);
+            float x0 = 0, y0 = 0, x1 = 0, y1 = 0, count = 0;
+            try
+            {
+                float.TryParse(textBox9.Text, out x0);
+                float.TryParse(textBox10.Text, out y0);
+                float.TryParse(textBox11.Text, out x1);
+                float.TryParse(textBox12.Text, out y1);
+                float.TryParse(textBox13.Text, out count);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Неверное значение для графика");
+                return;
+            }
+            func f;
+            switch (comboBox1.SelectedIndex)
+            {
+                case 0:
+                    f = (x, y) => (float)(Cos(x + y));
+                    break;
+                case 1:
+                    f = (x, y) => (float)(Sin(x + y));
+                    break;
+                default:
+                    MessageBox.Show("График не выбран");
+                    return;
+            }
+            int width = pictureBox1.Width;
+            int height = pictureBox1.Height;
+            g = Graphics.FromImage(pictureBox1.Image);
+            int scale = 100;
+            float[] minHor = new float[width];
+            float[] maxHor = new float[width];
+            for (int i = 0; i < width; i++)
+            {
+                minHor[i] = float.MaxValue;
+                maxHor[i] = float.MinValue;
+            }
+            float dy = (y1 - y0) / count;
+            float cosx = (float)Math.Cos(rotx);
+            float sinx = (float)Math.Sin(rotx);
+            float cosy = (float)Math.Cos(roty);
+            float siny = (float)Math.Sin(roty);
+            for (float y = y0; y < y1; y += dy)
+            {
+                Point prev = new Point(0, 0);
+                for (float picx = -width / 2; picx < width / 2; picx++)
+                {
+                    float x = (picx + x0) / scale;
+                    float rotx = cosx * y - sinx * x;
+                    float roty = sinx * y + cosx * x;
+                    int cx = (int)(picx + width / 2);
+                    if (cx >= width || cx <= 0)
+                        continue;
+                    float z = cosy * rotx + siny * f(rotx, roty);
+                    int cy = (int)(z * scale + height / 2);
+                    if (cy >= height || cy <= 0)
+                        continue;
+                    if (z < minHor[cx])
+                    {
+                        minHor[cx] = z;
+                        pen.Width = 1.5f;
+                        pen.Color = Color.DarkGreen;
+                        Point cur = new Point(cx, cy);
+                        if (Distance(prev, cur) < 20)
+                            g.DrawLine(pen, prev, cur);
+                        prev = cur;
+                    }
+                    if (z > maxHor[cx])
+                    {
+                        maxHor[cx] = z;
+                        pen.Width = 1;
+                        pen.Color = Color.LightGreen;
+                        Point cur = new Point(cx, cy);
+                        if (Distance(prev, cur) < 20)
+                            g.DrawLine(pen, prev, cur);
+                        prev = cur;
+                    }
+                }
+            }
+            pictureBox1.Invalidate();
         }
     }
 }
